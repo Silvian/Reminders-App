@@ -1,0 +1,41 @@
+{% extends "reminders/layout.html" %}
+
+{% block heading %}
+
+<h1>Reminders</h1>
+
+<button class="success button tiny" style="float:right" id="revealModal">Add a reminder</button>
+
+{% endblock %}
+
+
+{% block content %}
+
+<table id="list-todo">
+  <thead>
+    <tr>
+      <th width="1000">To do items</th>
+      <th width="100">Due</th>
+      <th width="100">Complete</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
+
+<div id="addModal" class="reveal-modal" data-reveal aria-labelledby="add new reminder" aria-hidden="true" role="dialog">
+  <h5 id="modalTitle">Add new reminder</h5>
+  <div>
+      <input id="details" name="details" path="details" type="text" placeholder="Enter reminder details" required="true" maxlength="250"/>
+      <input id="due" name="due" path="due" type="text" placeholder="Enter due date (mm/dd/yyyy)" required="true" maxlength="50"/>
+      <button class="button tiny" id="submitButton"  name="submitButton">Submit</button>
+  </div>
+  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+</div>
+
+<div id="reminders-empty" style="display: none;">
+    <h5 style="color: red">Nothing to do. Use the add button above to add new items.</h5>
+</div>
+
+{% endblock %}

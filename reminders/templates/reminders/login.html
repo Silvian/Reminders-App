@@ -1,0 +1,41 @@
+{% extends "reminders/layout.html" %}
+
+{% block heading %}
+
+<h1>Login</h1>
+
+<h3>Enter username and password</h3>
+
+
+  {% if logout %}
+    <div data-alert class="alert-box success radius">
+      {{ msg }}
+      <a href="#" class="close">&times;</a>
+    </div>
+
+  {% elif msg %}
+    <div data-alert class="alert-box alert radius">
+      {{ msg }}
+      <a href="#" class="close">&times;</a>
+    </div>
+  {% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="medium-4 columns">
+        <form role="form" enctype="multipart/form-data" action="/api/authenticate" method="post">
+            {% csrf_token %}
+            <input type = "text" name = "username" placeholder = "username" required autofocus>
+            <input type = "password" name = "password" placeholder = "password" required>
+
+            <button class = "button success" type = "submit" name = "login">Login</button>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
