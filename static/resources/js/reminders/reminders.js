@@ -1,7 +1,26 @@
 $(document).ready(function() {
 
-    loadReminders();
+    var todo_table = $('#list-todo').DataTable({
+    'ajax': {
+        "type"   : "GET",
+        "url"    : 'api/reminders',
 
+        "dataSrc": ""
+    },
+        'columns': [
+            {"data" : "fields.details"},
+            {"mRender": function(data, type, row) {
+                            return getFormattedDate(new Date(row.fields.due_date));
+                        }
+            },
+            {
+             "mRender": function (data, type, row) {
+                            return '<button type="button" class="button alert tiny" id="remove-'+ row.pk +'">Done</td>';
+                        }
+            }
+        ],
+
+    });
 
     $('#revealModal').click(function(e) {
 
@@ -12,15 +31,14 @@ $(document).ready(function() {
 
     $("#submitButton").click(function(event) {
 
-        addNewReminder();
+        addNewReminder(todo_table);
 
     });
 
 
-    $(document).on("click", '[id^="remove-"]', function(){
-        var id = $('[id^="remove-"]').attr('id');
-        var id = id.split('remove-');
-        removeReminders(id[1]);
+    $('#list-todo').on("click", 'button', function() {
+        var id = this.id.split('remove-');
+        removeReminders(id[1], todo_table);
     });
 
 
@@ -33,41 +51,7 @@ $(document).ready(function() {
 });
 
 
-function loadReminders() {
-    $('#reminders-empty').hide();
-    $('#list-todo tbody').html("");
-
-    $.ajax({
-	    type: 'GET',
-	    url: 'api/reminders',
-	    dataType: 'json',
-	    data: { get_param: 'value' },
-	    success: function (data) {
-	        if(data && data.length > 0) {
-                $('#list-todo tbody').html("");
-
-                $.each(data, function(i, item) {
-                    var reminders = item.fields;
-                    var due_date = getFormattedDate(new Date(reminders.due_date));
-                    $('#list-todo tbody').append('<tr>' +
-                        '<td>' + reminders.details + '</td>' +
-                        '<td>' + due_date + '</td>' +
-                        '<td><button type="button" class="button alert tiny" id="remove-'+ item.pk +'">Done</td>' +
-                        '</tr>');
-                });
-
-            }
-
-            else {
-                $('#reminders-empty').show();
-            }
-
-	    }
-	});
-
-}
-
-function addNewReminder() {
+function addNewReminder(todo_table) {
 
     url = '/api/add';
 
@@ -82,14 +66,14 @@ function addNewReminder() {
     posting.done(function( data ) {
         if(data.success) {
             $('#addModal').foundation('reveal', 'close');
-            loadReminders();
+            todo_table.ajax.reload();
         }
 
     });
 
 }
 
-function removeReminders(id) {
+function removeReminders(id, todo_table) {
 
     $.ajax({
 	    type: 'POST',
@@ -100,7 +84,7 @@ function removeReminders(id) {
 	            },
 	    success: function (data) {
 	        if(data.success) {
-                loadReminders();
+                todo_table.ajax.reload();
             }
 
 	    }
